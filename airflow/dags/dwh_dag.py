@@ -11,6 +11,16 @@ from helpers import SqlQueries
 default_args = {
     'owner': 'udacity',
     'start_date': datetime(2019, 1, 12),
+    # The DAG does not have dependencies on past runs
+    'depends_on_past': False,
+     # The DAG does not email on retry
+    'email_on_retry': False,
+    # On failure, the task are retried 3 times
+    'retries': 3,
+    # Retries happen every 5 minutes
+    'retry_delay': timedelta(minutes=5),
+    # Catchup is turned off
+    'catchup': False
 }
 
 dag = DAG('udac_example_dag',
