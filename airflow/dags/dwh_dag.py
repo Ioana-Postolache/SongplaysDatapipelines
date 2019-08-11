@@ -2,8 +2,7 @@ from datetime import datetime, timedelta
 import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators import (StageToRedshiftOperator, LoadFactOperator,
-                                LoadDimensionOperator, DataQualityOperator)
+from airflow.operators import (StageToRedshiftOperator, S3ToRedshiftOperator, LoadTableOperator, DataQualityOperator)
 from helpers import SqlQueries
 
 # AWS_KEY = os.environ.get('AWS_KEY')
