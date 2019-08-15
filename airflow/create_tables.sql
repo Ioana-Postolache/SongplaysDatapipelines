@@ -84,6 +84,15 @@ CREATE TABLE public.users (
 	CONSTRAINT users_pkey PRIMARY KEY (userid)
 );
 
+create table public.time( 
+      start_time bigint NOT NULL sortkey distkey,
+      hour int NOT NULL,
+      day int NOT NULL,
+      week int NOT NULL,
+      month int NOT NULL,
+      year int NOT NULL,
+      weekday int NOT NULL
+      )
 
 
 

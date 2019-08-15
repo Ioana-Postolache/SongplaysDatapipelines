@@ -11,7 +11,6 @@ class StageToRedshiftOperator(BaseOperator):
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
         FORMAT AS JSON {}
-        MANIFEST
     """
 
     @apply_defaults
@@ -19,7 +18,6 @@ class StageToRedshiftOperator(BaseOperator):
                  # Define your operators params (with defaults) 
                  redshift_conn_id="",
                  destination_table="",
-                 create_table_sql="",
                  aws_credentials_id="",
                  s3_bucket="",
                  s3_key="",
@@ -29,7 +27,6 @@ class StageToRedshiftOperator(BaseOperator):
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
         # Map params
         self.redshift_conn_id = redshift_conn_id
-        self.create_table_sql = create_table_sql
         self.destination_table = destination_table
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key        
@@ -41,10 +38,6 @@ class StageToRedshiftOperator(BaseOperator):
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
         
-        self.log.info(f"StageToRedshiftOperator - drop table: {destination_table} if it already exists")
-        redshift.run(f"DROP TABLE IF EXISTS {destination_table};")        
-        redshift.run(self.create_table_sql)
-        self.log.info(f"StageToRedshiftOperator - created stage table: {destination_table}")
         self.log.info("Copying data from S3 to Redshift")
         rendered_key = self.s3_key.format(**context)
         s3_path = "s3://{}/{}".format(self.s3_bucket, rendered_key)
