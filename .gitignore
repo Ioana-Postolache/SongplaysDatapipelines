@@ -1,1 +1,5 @@
+dwh.cfg
+ipynb_checkpoints/
+manifests
 __pycache__/
+*.pyc

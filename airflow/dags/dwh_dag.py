@@ -2,15 +2,20 @@ from datetime import datetime, timedelta
 import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators import (StageToRedshiftOperator, LoadFactOperator, LoadDimensionOperator, DataQualityOperator)
+from airflow.operators import (StageToRedshiftOperator, LoadTableOperator, LoadFactOperator, LoadDimensionOperator, DataQualityOperator)
 from helpers import SqlQueries
+from airflow.models import Variable
 
 # AWS_KEY = os.environ.get('AWS_KEY')
 # AWS_SECRET = os.environ.get('AWS_SECRET')
+s3_bucket = Variable.get('s3_bucket')
 
 default_args = {
     'owner': 'udacity',
-    'start_date': datetime(2019, 1, 12),
+    'start_date': datetime(2018, 11, 1),
+    'end_date': datetime(2018, 11, 1),
+    'schedule_interval': "@monthly",
+    'max_active_runs': 1,
     # The DAG does not have dependencies on past runs
     'depends_on_past': False,
      # The DAG does not email on retry
@@ -39,7 +44,7 @@ stage_events_to_redshift = StageToRedshiftOperator(
     destination_table="public.staging_events",
     aws_credentials_id="aws_credentials",
     s3_bucket=s3_bucket,
-    s3_key=s3_key,
+    s3_key="log_data",
     json_format="s3://udacity-dend/log_json_path.json",
     dag=dag
 )
@@ -50,13 +55,17 @@ stage_songs_to_redshift = StageToRedshiftOperator(
     destination_table="public.staging_songs",
     aws_credentials_id="aws_credentials",
     s3_bucket=s3_bucket,
-    s3_key=s3_key,
+    s3_key="song_data",
     json_format="auto",
     dag=dag
 )
 
-load_songplays_table = LoadFactOperator(
+load_songplays_table = LoadTableOperator(
     task_id='Load_songplays_fact_table',
+    redshift_conn_id="redshift",
+    destination_table="public.songplays",
+    insert_into_table_sql=SqlQueries.songplay_table_insert,
+    table_type="fact",
     dag=dag
 )
 
@@ -89,8 +98,8 @@ end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 start_operator >> stage_events_to_redshift >> load_songplays_table
 start_operator >> stage_songs_to_redshift >> load_songplays_table
-load_songplays_table >> load_user_dimension_table >> run_quality_checks
-load_songplays_table >> load_song_dimension_table >> run_quality_checks
-load_songplays_table >> load_artist_dimension_table >> run_quality_checks
-load_songplays_table >> load_time_dimension_table >> run_quality_checks
-run_quality_checks >> end_operator
+# load_songplays_table >> load_user_dimension_table >> run_quality_checks
+# load_songplays_table >> load_song_dimension_table >> run_quality_checks
+# load_songplays_table >> load_artist_dimension_table >> run_quality_checks
+# load_songplays_table >> load_time_dimension_table >> run_quality_checks
+# run_quality_checks >> end_operator

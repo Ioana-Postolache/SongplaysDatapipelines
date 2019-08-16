@@ -1,5 +1,19 @@
 class SqlQueries:
-    songplay_table_insert = ("""
+    songplays_temp_table_create = ("""
+                        CREATE TABLE public.songplays_temp (
+                            playid varchar(32) NOT NULL,
+                            start_time timestamp NOT NULL,
+                            userid int4 NOT NULL,
+                            "level" varchar(256),
+                            songid varchar(256),
+                            artistid varchar(256),
+                            sessionid int4,
+                            location varchar(256),
+                            user_agent varchar(256)
+                        );
+    """)
+
+    songplays_table_insert = ("""
         SELECT
                 md5(events.sessionid || events.start_time) songplay_id,
                 events.start_time, 
@@ -19,18 +33,18 @@ class SqlQueries:
                 AND events.length = songs.duration
     """)
 
-    user_table_insert = ("""
+    users_table_insert = ("""
         SELECT distinct userid, firstname, lastname, gender, level
         FROM staging_events
         WHERE page='NextSong'
     """)
 
-    song_table_insert = ("""
+    songs_table_insert = ("""
         SELECT distinct song_id, title, artist_id, year, duration
         FROM staging_songs
     """)
 
-    artist_table_insert = ("""
+    artists_table_insert = ("""
         SELECT distinct artist_id, artist_name, artist_location, artist_latitude, artist_longitude
         FROM staging_songs
     """)
