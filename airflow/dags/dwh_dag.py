@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators import (StageToRedshiftOperator, LoadTableOperator, LoadFactOperator, LoadDimensionOperator, DataQualityOperator)
+from airflow.operators import (StageToRedshiftOperator, LoadFactOperator, LoadDimensionOperator, DataQualityOperator)
 from helpers import SqlQueries
 from airflow.models import Variable
 
@@ -60,12 +60,12 @@ stage_songs_to_redshift = StageToRedshiftOperator(
     dag=dag
 )
 
-load_songplays_table = LoadTableOperator(
+load_songplays_table = LoadFactOperator(
     task_id='Load_songplays_fact_table',
     redshift_conn_id="redshift",
     destination_table="public.songplays",
-    insert_into_table_sql=SqlQueries.songplay_table_insert,
-    table_type="fact",
+    insert_into_table_sql=SqlQueries.songplay_table_insert.format({{prev_ds}}, {{next_ds}}),    
+    temp_table = temp_table,
     dag=dag
 )
 
