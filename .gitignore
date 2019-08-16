@@ -1,5 +1,7 @@
 dwh.cfg
 ipynb_checkpoints/
 manifests
+airflow/plugins/operators/__pycache__/
+airflow/plugins/helpers/__pycache__/
+airflow/plugins/__pycache__/
 __pycache__/
-*.pyc

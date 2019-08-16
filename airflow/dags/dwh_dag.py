@@ -13,7 +13,7 @@ s3_bucket = Variable.get('s3_bucket')
 default_args = {
     'owner': 'udacity',
     'start_date': datetime(2018, 11, 1),
-    'end_date': datetime(2018, 11, 1),
+    'end_date': datetime(2018, 12, 1),
     'schedule_interval': "@monthly",
     'max_active_runs': 1,
     # The DAG does not have dependencies on past runs
@@ -33,7 +33,7 @@ dag = DAG('dwh_dag',
           description='Load and transform data in Redshift with Airflow',
           # '0 * * * *' equivalent of @hourly - Run once an hour at the beginning of the hour
           #schedule_interval='0 * * * *'
-          schedule_interval=None
+          #schedule_interval=None
         )
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
@@ -64,8 +64,8 @@ load_songplays_table = LoadFactOperator(
     task_id='Load_songplays_fact_table',
     redshift_conn_id="redshift",
     destination_table="public.songplays",
-    insert_into_table_sql=SqlQueries.songplay_table_insert.format({{prev_ds}}, {{next_ds}}),    
-    temp_table = temp_table,
+    insert_into_table_sql=SqlQueries.songplay_table_insert,    
+    temp_table = "songplays_temp",
     dag=dag
 )
 

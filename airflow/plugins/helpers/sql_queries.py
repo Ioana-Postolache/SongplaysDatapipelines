@@ -1,17 +1,4 @@
 class SqlQueries:
-    songplays_temp_table_create = ("""
-                        CREATE TABLE public.songplays_temp (
-                            playid varchar(32) NOT NULL,
-                            start_time timestamp NOT NULL,
-                            userid int4 NOT NULL,
-                            "level" varchar(256),
-                            songid varchar(256),
-                            artistid varchar(256),
-                            sessionid int4,
-                            location varchar(256),
-                            user_agent varchar(256)
-                        );
-    """)
 
     songplays_table_insert = ("""
         SELECT
@@ -26,7 +13,7 @@ class SqlQueries:
                 events.useragent
                 FROM (SELECT TIMESTAMP 'epoch' + ts/1000 * interval '1 second' AS start_time, *
             FROM staging_events
-            WHERE page='NextSong' and TIMESTAMP 'epoch' + ts/1000 * interval '1 second' BETWEEN {} AND {}) events
+            WHERE page='NextSong') events
             LEFT JOIN staging_songs songs
             ON events.song = songs.title
                 AND events.artist = songs.artist_name
