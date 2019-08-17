@@ -11,17 +11,17 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 # CREATE TABLES
 artists_table_create = ("""
                     CREATE TABLE public.artists (
-                        artistid varchar(256) NOT NULL,
+                        artistid varchar(256) NOT NULL sortkey,
                         name varchar(256),
                         location varchar(256),
                         lattitude numeric(18,0),
                         longitude numeric(18,0)
-                    );
+                    ) diststyle all;
 """)
 songplays_table_create = ("""
                         CREATE TABLE public.songplays (
                             playid varchar(32) NOT NULL,
-                            start_time timestamp NOT NULL,
+                            start_time timestamp NOT NULL sortkey distkey,
                             userid int4 NOT NULL,
                             "level" varchar(256),
                             songid varchar(256),
@@ -33,15 +33,16 @@ songplays_table_create = ("""
                         );
 """)
 
+
 songs_table_create = ("""
                     CREATE TABLE public.songs (
-                        songid varchar(256) NOT NULL,
+                        songid varchar(256) NOT NULL sortkey,
                         title varchar(256),
                         artistid varchar(256),
                         "year" int4,
                         duration numeric(18,0),
                         CONSTRAINT songs_pkey PRIMARY KEY (songid)
-                    );
+                    ) diststyle all;
 """)
 
 staging_events_table_create = ("""
@@ -85,13 +86,13 @@ staging_songs_table_create = ("""
 
 users_table_create = ("""
                     CREATE TABLE public.users (
-                        userid int4 NOT NULL,
+                        userid int4 NOT NULL sortkey,
                         first_name varchar(256),
                         last_name varchar(256),
                         gender varchar(256),
                         "level" varchar(256),
                         CONSTRAINT users_pkey PRIMARY KEY (userid)
-                    );
+                    ) diststyle all;
 """)
 time_table_create = ("""
                     create table public.time( 
@@ -102,7 +103,7 @@ time_table_create = ("""
                           month int NOT NULL,
                           year int NOT NULL,
                           weekday int NOT NULL
-                          )
+                          ) 
 """)
 
 # QUERY LISTS

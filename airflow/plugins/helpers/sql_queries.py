@@ -2,15 +2,15 @@ class SqlQueries:
 
     songplays_table_insert = ("""
         SELECT
-                md5(events.sessionid || events.start_time) songplay_id,
+                md5(events.sessionid || events.start_time)::varchar(32) playid,
                 events.start_time, 
                 events.userid, 
                 events.level, 
-                songs.song_id, 
-                songs.artist_id, 
+                songs.song_id songid, 
+                songs.artist_id artistid, 
                 events.sessionid, 
                 events.location, 
-                events.useragent
+                events.useragent user_agent
                 FROM (SELECT TIMESTAMP 'epoch' + ts/1000 * interval '1 second' AS start_time, *
             FROM staging_events
             WHERE page='NextSong') events
