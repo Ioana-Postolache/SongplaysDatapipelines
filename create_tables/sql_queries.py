@@ -3,14 +3,14 @@
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events"
 staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs"
 songplays_table_drop = "DROP TABLE IF EXISTS songplays"
-users_table_drop = "DROP TABLE IF EXISTS \"users\""
-songs_table_drop = "DROP TABLE IF EXISTS songs"
-artists_table_drop = "DROP TABLE IF EXISTS artists"
+user_table_drop = "DROP TABLE IF EXISTS \"user\""
+song_table_drop = "DROP TABLE IF EXISTS song"
+artist_table_drop = "DROP TABLE IF EXISTS artist"
 time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
-artists_table_create = ("""
-                    CREATE TABLE public.artists (
+artist_table_create = ("""
+                    CREATE TABLE public.artist (
                         artistid varchar(256) NOT NULL sortkey,
                         name varchar(256),
                         location varchar(256),
@@ -34,14 +34,14 @@ songplays_table_create = ("""
 """)
 
 
-songs_table_create = ("""
-                    CREATE TABLE public.songs (
+song_table_create = ("""
+                    CREATE TABLE public.song (
                         songid varchar(256) NOT NULL sortkey,
                         title varchar(256),
                         artistid varchar(256),
                         "year" int4,
                         duration numeric(18,0),
-                        CONSTRAINT songs_pkey PRIMARY KEY (songid)
+                        CONSTRAINT song_pkey PRIMARY KEY (songid)
                     ) diststyle all;
 """)
 
@@ -84,33 +84,29 @@ staging_songs_table_create = ("""
 """)
 
 
-users_table_create = ("""
-                    CREATE TABLE public.users (
+user_table_create = ("""
+                    CREATE TABLE public.user (
                         userid int4 NOT NULL sortkey,
                         first_name varchar(256),
                         last_name varchar(256),
                         gender varchar(256),
                         "level" varchar(256),
-                        CONSTRAINT users_pkey PRIMARY KEY (userid)
+                        CONSTRAINT user_pkey PRIMARY KEY (userid)
                     ) diststyle all;
 """)
 time_table_create = ("""
                     create table public.time( 
-                          start_time bigint NOT NULL sortkey distkey,
+                          start_time timestamp NOT NULL sortkey distkey,
                           hour int NOT NULL,
                           day int NOT NULL,
                           week int NOT NULL,
                           month int NOT NULL,
                           year int NOT NULL,
                           weekday int NOT NULL
-                          ) 
+                          );
 """)
 
 # QUERY LISTS
 
-create_table_queries = [staging_events_table_create, staging_songs_table_create, songplays_table_create, users_table_create, songs_table_create, artists_table_create, time_table_create]
-drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplays_table_drop, users_table_drop, songs_table_drop, artists_table_drop, time_table_drop]
-
-
-
-
+create_table_queries = [staging_events_table_create, staging_songs_table_create, songplays_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplays_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]

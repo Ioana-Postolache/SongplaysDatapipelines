@@ -7,7 +7,7 @@ from helpers import SqlQueries
 # comment out the next 2 lines if you add the s3_bucket variable in Airflow
 # from airflow.models import Variable
 # s3_bucket = Variable.get('s3_bucket')
-s3_bucket = "airflow-udacity"
+s3_bucket = "udacity-dend"
 # AWS_KEY = os.environ.get('AWS_KEY')
 # AWS_SECRET = os.environ.get('AWS_SECRET')
 
@@ -15,7 +15,7 @@ s3_bucket = "airflow-udacity"
 default_args = {
     'owner': 'udacity',
     'start_date': datetime(2018, 11, 1),
-    'end_date': datetime(2018, 11, 3),
+    'end_date': datetime(2018, 11, 2),
     'max_active_runs': 1,
     # The DAG does not have dependencies on past runs
     'depends_on_past': False,
@@ -29,12 +29,12 @@ default_args = {
     'catchup': False
 }
 
-dag = DAG('dwh_dag',
+dag = DAG('dag',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
-          # '0 * * * *' equivalent of @hourly - Run once an hour at the beginning of the hour
-          schedule_interval='0 0 1 * *'
-          #schedule_interval=None
+          # '0 0 1 * *' equivalent of @hourly
+          schedule_interval='0 0 1 * *',
+          max_active_runs=1
         )
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
@@ -51,7 +51,7 @@ stage_events_to_redshift = StageToRedshiftOperator(
 )
 
 stage_songs_to_redshift = StageToRedshiftOperator(
-    task_id='Stage_songs',
+    task_id='Stage_song',
     redshift_conn_id="redshift",
     destination_table="public.staging_songs",
     aws_credentials_id="aws_credentials",
@@ -70,29 +70,30 @@ load_songplays_table = LoadFactOperator(
     dag=dag
 )
 
-load_users_dimension_table = LoadDimensionOperator(
-    task_id='Load_users_dim_table',
+load_user_dimension_table = LoadDimensionOperator(
+    task_id='Load_user_dim_table',
     redshift_conn_id="redshift",
-    destination_table="public.users",
-    insert_into_table_sql=SqlQueries.users_table_insert,
+    destination_table="public.user",
+    insert_into_table_sql=SqlQueries.user_table_insert,
+    load_mode="delete-load",
     dag=dag
 )
 
-load_songs_dimension_table = LoadDimensionOperator(
-    task_id='Load_songs_dim_table',
-    task_id='Load_songs_dim_table',
+load_song_dimension_table = LoadDimensionOperator(
+    task_id='Load_song_dim_table',
     redshift_conn_id="redshift",
-    destination_table="public.songs",
-    insert_into_table_sql=SqlQueries.songs_table_insert,
+    destination_table="public.song",
+    insert_into_table_sql=SqlQueries.song_table_insert,
+    load_mode="delete-load",
     dag=dag
 )
 
-load_artists_dimension_table = LoadDimensionOperator(
-    task_id='Load_artists_dim_table',
-    task_id='Load_artists_dim_table',
+load_artist_dimension_table = LoadDimensionOperator(
+    task_id='Load_artist_dim_table',
     redshift_conn_id="redshift",
-    destination_table="public.artists",
-    insert_into_table_sql=SqlQueries.artists_table_insert,
+    destination_table="public.artist",
+    insert_into_table_sql=SqlQueries.artist_table_insert,
+    load_mode="delete-load",
     dag=dag
 )
 
@@ -101,13 +102,16 @@ load_time_dimension_table = LoadDimensionOperator(
     redshift_conn_id="redshift",
     destination_table="public.time",
     insert_into_table_sql=SqlQueries.time_table_insert,
-    load_mode="",
     check_column="start_time",
+    provide_context=True,
     dag=dag
 )
 
 run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
+    redshift_conn_id="redshift",
+    schema = "public",
+    tbl_list = ["songplays", "song", "artist", "user", "time"],
     dag=dag
 )
 

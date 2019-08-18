@@ -5,7 +5,7 @@ from airflow.utils.decorators import apply_defaults
 class LoadDimensionOperator(BaseOperator):
     ui_color = '#358140'
     load_sql_template = """
-     INSERT INTO {destination_table} {insert_into_table_sql};
+     INSERT INTO {destination_table} {insert_into_table_sql}
     """
     
     @apply_defaults
@@ -16,7 +16,7 @@ class LoadDimensionOperator(BaseOperator):
                  insert_into_table_sql="",
                  load_mode="",
                  check_column="",
-                 provide_context=True,
+                 provide_context=False,
                  *args, **kwargs):
 
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
@@ -34,10 +34,11 @@ class LoadDimensionOperator(BaseOperator):
             insert_into_table_sql = self.insert_into_table_sql,
             destination_table = self.destination_table
         )
+        
         if(self.load_mode == "delete-load"):
             self.log.info(f"LoadDimensionOperator -truncate dimension table: {self.destination_table}")
             redshift.run(f"TRUNCATE TABLE {self.destination_table}")
         else:
-            load_sql = load_sql + f"WHERE {self.check_column} > {context["prev_ds"]} AND {self.check_column} > {context["next_ds"]}"
+            load_sql = load_sql + f"WHERE {self.check_column} > '{context['ds']}' AND {self.check_column} < '{context['next_ds']}'"
         redshift.run(load_sql)
         self.log.info(f"LoadDimensionOperator - inserted into table: {self.destination_table}")
