@@ -71,7 +71,7 @@ db_port = ""
 ```
 
 ## How to run
-###### Use Airflow's UI to configure your AWS credentials and connection to Redshift.
+##### Use Airflow's UI to configure your AWS credentials and connection to Redshift.
  - Click on the Admin tab and select Connections.
  - Under Connections, select Create.
  - On the create connection page, enter the following values:
