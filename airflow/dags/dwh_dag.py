@@ -29,11 +29,11 @@ default_args = {
     'catchup': False
 }
 
-dag = DAG('dag',
+dag = DAG('dwh_daacleaaarg',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
-          # '0 0 1 * *' equivalent of @hourly
-          schedule_interval='0 0 1 * *',
+          # '0 * * * *' equivalent of @hourly
+          schedule_interval='0 * * * *',
           max_active_runs=1
         )
 
@@ -66,7 +66,8 @@ load_songplays_table = LoadFactOperator(
     task_id='Load_songplays_fact_table',
     redshift_conn_id="redshift",
     destination_table="public.songplays",
-    insert_into_table_sql=SqlQueries.songplays_table_insert,    
+    insert_into_table_sql=SqlQueries.songplays_table_insert,  
+    check_column="start_time",
     dag=dag
 )
 

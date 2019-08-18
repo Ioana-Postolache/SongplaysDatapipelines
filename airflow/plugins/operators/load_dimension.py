@@ -1,6 +1,7 @@
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
+from datetime import datetime, timedelta
 
 class LoadDimensionOperator(BaseOperator):
     ui_color = '#358140'
@@ -39,6 +40,9 @@ class LoadDimensionOperator(BaseOperator):
             self.log.info(f"LoadDimensionOperator -truncate dimension table: {self.destination_table}")
             redshift.run(f"TRUNCATE TABLE {self.destination_table}")
         else:
-            load_sql = load_sql + f"WHERE {self.check_column} > '{context['ds']}' AND {self.check_column} < '{context['next_ds']}'"
+            exec_ts = datetime.strptime(context['ts'].replace("+00:00", ""), '%Y-%m-%dT%H:%M:%S')
+            ts = exec_ts.strftime("%Y-%m-%d %H:%M:%S.%f")
+            next_ts = (exec_ts + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S.%f")
+            load_sql = load_sql + f"WHERE {self.check_column} >= '{ts}' AND {self.check_column} < '{next_ts}'"
         redshift.run(load_sql)
         self.log.info(f"LoadDimensionOperator - inserted into table: {self.destination_table}")

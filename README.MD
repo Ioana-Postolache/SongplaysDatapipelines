@@ -71,20 +71,19 @@ db_port = ""
 ```
 
 ## How to run
-### use Airflow's UI to configure your AWS credentials and connection to Redshift.
-  - Click on the Admin tab and select Connections.
-  - Under Connections, select Create.
-  - On the create connection page, enter the following values:
-#### AWS credentials
+##### Use Airflow's UI to configure your AWS credentials and connection to Redshift.
+ - Click on the Admin tab and select Connections.
+ - Under Connections, select Create.
+ - On the create connection page, enter the following values:
+###### AWS credentials
 Conn Id: Enter aws_credentials.
 Conn Type: Enter Amazon Web Services.
 Login: Enter your Access key ID from the IAM User credentials you downloaded earlier.
 Password: Enter your Secret access key from the IAM User credentials you downloaded earlier.
-- Once you've entered these values, select Save and Add Another.
 
-On the next create connection page, enter the following values:
+- Once you've entered these values, select Save and Add Another.On the next create connection page, enter the following values:
 
-#### Redshift
+###### Redshift
 
 Conn Id: Enter redshift.
 Conn Type: Enter Postgres.
@@ -93,9 +92,10 @@ Schema: Enter dev. This is the Redshift database you want to connect to.
 Login: Enter awsuser.
 Password: Enter the password you created when launching your Redshift cluster.
 Port: Enter 5439.
-Once you've entered these values, select Save.
-### add the connection details to the dwh.cfg file in create_tables.py and then run create_tables/create_tables.py to create the tables in Redshift
-### Start the airflow server
+
+- Once you've entered these values, select Save.
+##### Add the connection details to the dwh.cfg file in create_tables.py and then run create_tables/create_tables.py to create the tables in Redshift
+##### Start the airflow server
 ```
 /opt/airflow/start.sh
 ```
