@@ -15,7 +15,6 @@ s3_bucket = "udacity-dend"
 default_args = {
     'owner': 'udacity',
     'start_date': datetime(2018, 11, 1),
-    'end_date': datetime(2018, 11, 2),
     'max_active_runs': 1,
     # The DAG does not have dependencies on past runs
     'depends_on_past': False,
