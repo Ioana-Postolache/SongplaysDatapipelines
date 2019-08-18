@@ -29,7 +29,7 @@ default_args = {
     'catchup': False
 }
 
-dag = DAG('dwh_daacleaaarg',
+dag = DAG('dwh_dag',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
           # '0 * * * *' equivalent of @hourly

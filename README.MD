@@ -76,22 +76,22 @@ db_port = ""
  - Under Connections, select Create.
  - On the create connection page, enter the following values:
 ###### AWS credentials
-Conn Id: Enter aws_credentials.
-Conn Type: Enter Amazon Web Services.
-Login: Enter your Access key ID from the IAM User credentials you downloaded earlier.
-Password: Enter your Secret access key from the IAM User credentials you downloaded earlier.
+* Conn Id: Enter aws_credentials.
+* Conn Type: Enter Amazon Web Services.
+* Login: Enter your Access key ID from the IAM User credentials you downloaded earlier.
+* Password: Enter your Secret access key from the IAM User credentials you downloaded earlier.
 
 - Once you've entered these values, select Save and Add Another.On the next create connection page, enter the following values:
 
 ###### Redshift
 
-Conn Id: Enter redshift.
-Conn Type: Enter Postgres.
-Host: Enter the endpoint of your Redshift cluster, excluding the port at the end. You can find this by selecting your cluster in the Clusters page of the Amazon Redshift console. See where this is located in the screenshot below. IMPORTANT: Make sure to NOT include the port at the end of the Redshift endpoint string.
-Schema: Enter dev. This is the Redshift database you want to connect to.
-Login: Enter awsuser.
-Password: Enter the password you created when launching your Redshift cluster.
-Port: Enter 5439.
+* Conn Id: Enter redshift.
+* Conn Type: Enter Postgres.
+* Host: Enter the endpoint of your Redshift cluster, excluding the port at the end. You can find this by selecting your cluster in the Clusters page of the Amazon Redshift console. IMPORTANT: Make sure to NOT include the port at the end of the Redshift endpoint string.
+* Schema: Enter dev. This is the Redshift database you want to connect to.
+* Login: Enter awsuser.
+* Password: Enter the password you created when launching your Redshift cluster.
+* Port: Enter 5439.
 
 - Once you've entered these values, select Save.
 ##### Add the connection details to the dwh.cfg file in create_tables.py and then run create_tables/create_tables.py to create the tables in Redshift
@@ -99,3 +99,4 @@ Port: Enter 5439.
 ```
 /opt/airflow/start.sh
 ```
+##### Turn on the dwh_dag DAG and monitor its execution
